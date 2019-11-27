@@ -52,60 +52,33 @@ public class LoginActivity extends AppCompatActivity {
         // Capture button clicks
         btnLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                if (!CommonUtils.validateEmail(LoginActivity.this, edittextEmail, inputEamilId)) {
+               /* if (!CommonUtils.validateEmail(LoginActivity.this, edittextEmail, inputEamilId)) {
                     return;
                 }
                 if (!CommonUtils.validatePassword(LoginActivity.this, edittextPassword, inputPassword)) {
                     return;
                 }
 
+*/
                 Toast.makeText(LoginActivity.this, "Thanks", Toast.LENGTH_LONG).show();
 
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+                //finish();
             }
         });
 
     }
 
-   /* //region validation Email
-    private boolean validateEmail() {
-        String email = edittextEmail.getText().toString().trim();
-        if (email.isEmpty() || !isValidEmail(email) || !email.equalsIgnoreCase("test@aigen.tech")) {
-            inputEamilId.setError(getString(R.string.err_msg_email));
-            requestFocus(edittextEmail);
-            return false;
-        } else {
-            inputEamilId.setErrorEnabled(false);
-        }
-        return true;
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
-    //endregion
-
-    //region validation password
-    private boolean validatePassword() {
-        String pass = edittextPassword.getText().toString().trim();
-        if (edittextPassword.getText().toString().trim().isEmpty() || !pass.equalsIgnoreCase("AigenTech")) {
-            inputPassword.setError(getString(R.string.err_msg_password));
-            requestFocus(inputPassword);
-            return false;
-        } else {
-            inputPassword.setErrorEnabled(false);
-        }
-
-        return true;
-    }
-    //endregion
-
-    private static boolean isValidEmail(String email) {
-        return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
-    }
-
-    private void requestFocus(View view) {
-        if (view.requestFocus()) {
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        }
-    }*/
 
     private class MyTextWatcher implements TextWatcher {
 

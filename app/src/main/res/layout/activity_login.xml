@@ -29,13 +29,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:orientation="vertical"
-            android:padding="15dp">
+            android:padding="25dp">
 
             <ImageView
                 android:id="@+id/imgLogin"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="30dp"
                 android:src="@mipmap/ic_launcher" />
 
 
@@ -61,7 +62,6 @@
                 android:layout_marginBottom="12dp"
                 android:hint="@string/email_address"
                 android:textColorHint="@color/textcolor"
-                app:endIconMode="password_toggle"
                 app:hintTextAppearance="@style/TextAppearence.App.TextInputLayout">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -83,7 +83,8 @@
                 android:layout_marginBottom="12dp"
                 android:hint="@string/password"
                 android:textColorHint="@color/textcolor"
-                app:endIconMode="password_toggle">
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@android:color/white">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edittextPassword"
@@ -101,6 +102,7 @@
                 android:layout_height="32dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="30dp"
                 android:background="@color/white"
                 android:text="Log In"
                 android:textColor="@color/md_black_1000"
