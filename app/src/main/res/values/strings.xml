@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">AIGEN</string>
+    <string name="email_address">Enter Email</string>
+    <string name="password">Enter Password</string>
+    <string name="err_msg_email">Enter valid email address</string>
+    <string name="err_msg_password">Enter the password</string>
+    <string name="err_msg_password_not_match">Password not match</string>
+    <string name="err_msg_email_not_match">Email address not match</string>
+
+    <string name="view_ad">View Ad</string>
+    <string name="create_ad">create Ad</string>
+    <string name="logout">Logout</string>
+</resources>
