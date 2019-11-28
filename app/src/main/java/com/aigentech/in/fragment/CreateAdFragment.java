@@ -169,25 +169,39 @@ public class CreateAdFragment extends Fragment {
         try {
             int valid = validationData();
             if (valid == 0) {
-                if (images == null && images.size() == 0) {
+                if (images == null || images.size() == 0) {
                     Toast.makeText(getActivity(), "Please atleast upload 1 image", Toast.LENGTH_SHORT).show();
                 } else {
+
+                    carDetailsDto.setTotalPhotoCount(String.valueOf(images.size()));
+
                     Gson gson = new Gson();
                     String jsonData = gson.toJson(carDetailsDto, CarDetailsDto.class);
-                    System.out.println(jsonData);
-                }
-            }
-            String carNumber = edittextCarNumber.getText().toString();
-            if (TextUtils.isEmpty(carNumber)) {
-                carNumber = "default";
-            }
+                    System.out.println("JSON DATA" + jsonData);
+                    CommonUtils.addEntryToJsonFile(getContext(), carDetailsDto.getCarNumber(), jsonData);
+                    //CommonUtils.writeToFileJson(getContext(), jsonData, carDetailsDto.getCarNumber());
+                   /* boolean isFileCreated = CommonUtils.createJsonFile(getActivity(), "storage.json", jsonData);
+                    if (isFileCreated) {
+                        Toast.makeText(getActivity(), "Successfull save", Toast.LENGTH_SHORT).show();
+                    } else {
+                        //show error or try again.
+                        Toast.makeText(getActivity(), "Fail to save", Toast.LENGTH_SHORT).show();
+                    }*/
 
-            ArrayList<Image> saveImage = images;
-            boolean saveData = CommonUtils.storeImageInFloder(getContext(), carNumber, saveImage);
-            if (saveData) {
-                Toast.makeText(getActivity(), "Save Successfull", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getActivity(), "Failed to save data.", Toast.LENGTH_SHORT).show();
+
+                    String carNumber = edittextCarNumber.getText().toString();
+                    if (TextUtils.isEmpty(carNumber)) {
+                        carNumber = "default";
+                    }
+
+                    ArrayList<Image> saveImage = images;
+                    boolean saveData = CommonUtils.storeImageInFloder(getContext(), carNumber, saveImage);
+                    if (saveData) {
+                        Toast.makeText(getActivity(), "Save Successfull", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Failed to save data.", Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
 
         } catch (Exception e) {
@@ -214,11 +228,11 @@ public class CreateAdFragment extends Fragment {
         carDetailsDto.setSellerEmailAddress(sellerEmail);
 
         if (TextUtils.isEmpty(carNumber) || !carNumber.matches(car_rgex)) {
-            inputCarName.setError("Enter valid car number");
+            inputCarNumber.setError("Enter valid car number");
             return 1;
         }
         if (TextUtils.isEmpty(carCompanyName)) {
-            inputCarName.setError("Enter company name");
+            inputComapnyName.setError("Enter company name");
             return 2;
         }
         if (TextUtils.isEmpty(carName)) {
@@ -226,15 +240,15 @@ public class CreateAdFragment extends Fragment {
             return 3;
         }
         if (TextUtils.isEmpty(sellerName)) {
-            inputCarName.setError("Enter seller name");
+            inputSellerName.setError("Enter seller name");
             return 4;
         }
         if (TextUtils.isEmpty(sellerMobileNo) || sellerMobileNo.length() != 10) {
-            inputCarName.setError("Enter 10digits seller mobile number");
+            inputSellerMobileNumber.setError("Enter 10digits seller mobile number");
             return 5;
         }
         if (TextUtils.isEmpty(sellerEmail) || !CommonUtils.isValidEmail(sellerEmail)) {
-            inputCarName.setError("Enter valid seller email address");
+            inputSellerEmailId.setError("Enter valid seller email address");
             return 6;
         }
         return 0;

@@ -58,7 +58,8 @@
                             android:id="@+id/edittextCarNumber"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="text"
+                            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+                            android:inputType="textCapCharacters"
                             android:textColor="@color/textcolor"
                             android:textColorHint="@color/textcolor" />
 

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -14,13 +15,21 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.nguyenhoanglam.imagepicker.model.Image;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
@@ -109,36 +118,6 @@ public class CommonUtils {
         }
     }
 
-    public static void copyFile(Context context, String inputPath, String outputPath) {
-
-        InputStream in = null;
-        OutputStream out = null;
-        try {
-            in = new FileInputStream(inputPath);
-            out = new FileOutputStream(outputPath);
-
-            byte[] buffer = new byte[1024];
-            int read;
-            while ((read = in.read(buffer)) != -1) {
-                out.write(buffer, 0, read);
-            }
-            in.close();
-            in = null;
-
-            // write the output file (You have now copied the file)
-            out.flush();
-            out.close();
-            out = null;
-            Toast.makeText(context, " success to save ", Toast.LENGTH_SHORT).show();
-
-        } catch (FileNotFoundException fnfe1) {
-            Toast.makeText(context, " fail to save " + fnfe1.getMessage(), Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(context, " fail to save " + e.getMessage(), Toast.LENGTH_SHORT).show();
-
-        }
-    }
-
     public static boolean storeImageInFloder(Context context, String floderName, ArrayList<Image> saveImage) {
         try {
             //create parent floder
@@ -192,30 +171,165 @@ public class CommonUtils {
 
     }
 
+    public static void writeToFileJson(Context context, String data, String carNumber) {
+        try {
+            File file = new File(context.getFilesDir(), "AIGEN");
+            FileReader fileReader = null;
+            FileWriter fileWriter = null;
+            BufferedReader bufferedReader = null;
+            BufferedWriter bufferedWriter = null;
+            String response = null;
+            if (!file.exists()) {
+                file.createNewFile();
+                fileWriter = new FileWriter(file.getAbsoluteFile());
+                bufferedWriter = new BufferedWriter(fileWriter);
+                bufferedWriter.write("{}");
+                bufferedWriter.close();
+            }
+            StringBuffer output = new StringBuffer();
+            fileReader = new FileReader(file.getAbsoluteFile());
+            bufferedReader = new BufferedReader(fileReader);
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
 
-    private static void copySingleFile(File sourceFile, File destFile)
-            throws IOException {
-        System.out.println("COPY FILE: " + sourceFile.getAbsolutePath()
-                + " TO: " + destFile.getAbsolutePath());
-        if (!destFile.exists()) {
-            destFile.createNewFile();
+                output.append(line + "\n");
+                //output.append(line);
+            }
+            response = output.toString();
+            bufferedReader.close();
+
+
+            JSONObject messageDetails = new JSONObject(response);
+            Boolean isUserExit = messageDetails.has("Username");
+            if (!isUserExit) {
+                JSONArray newuserMessage = new JSONArray();
+                newuserMessage.put(carNumber);
+                // messageDetails.put("Username", newuserMessage);
+                messageDetails.put(carNumber, data);
+            } else {
+                JSONArray userMessage = (JSONArray) messageDetails.get("Username");
+                userMessage.put(carNumber);
+            }
+
+            fileWriter = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fileWriter);
+            bw.write(messageDetails.toString());
+            bw.close();
+        } catch (Exception e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
+    public static void addEntryToJsonFile(Context ctx, String id, String name) {
+
+        // parse existing/init new JSON
+
+        File jsonFile = new File(ctx.getDir("my_data_dir", 0), "storage.json");
+        String previousJson = null;
+        if (jsonFile.exists()) {
+            try {
+                previousJson = read(ctx, "storage.json");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            previousJson = "{}";
         }
 
-        FileChannel sourceChannel = null;
-        FileChannel destChannel = null;
+        // create new "complex" object
+        JSONObject mO = null;
+        JSONObject jO = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
 
         try {
-            sourceChannel = new FileInputStream(sourceFile).getChannel();
-            destChannel = new FileOutputStream(destFile).getChannel();
-            sourceChannel.transferTo(0, sourceChannel.size(), destChannel);
-        } finally {
-            if (sourceChannel != null) {
-                sourceChannel.close();
-            }
-            if (destChannel != null) {
-                destChannel.close();
-            }
+            mO = new JSONObject(previousJson);
+            jO.put("car", id);
+          /*  jO.put("completed", true);
+            jO.put("name", name);*/
+            //mO.put(id, name); //thanks "retired" answer
+            //jO.put("name", name);
+            mO.put(id, jO);
+            jsonArray.put(name);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+
+        // generate string from the object
+        String jsonString = null;
+        try {
+            jsonString = mO.toString(4);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // write back JSON file
+        write(jsonFile, jsonString);
+
+    }
+
+    public static void write(File jsonFile, String jsonString) {
+        // String path = Environment.getExternalStorageDirectory() + File.separator + "/AppName/App_cache" + File.separator;
+        try {
+
+            if (!jsonFile.createNewFile()) {
+                jsonFile.delete();
+                jsonFile.createNewFile();
+            }
+            ObjectOutputStream objectOutputStream = null;
+
+            objectOutputStream = new ObjectOutputStream(new FileOutputStream(jsonFile));
+            objectOutputStream.writeObject(jsonString);
+            objectOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public static boolean createJsonFile(Context context, String fileName, String jsonString) {
+        String FILENAME = "storage.json";
+
+        try {
+            FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+            if (jsonString != null) {
+                fos.write(jsonString.getBytes());
+            }
+            fos.close();
+            return true;
+        } catch (
+                FileNotFoundException fileNotFound) {
+            return false;
+        } catch (
+                IOException ioException) {
+            return false;
+        }
+
+    }
+
+    public static String read(Context context, String fileName) {
+        try {
+            FileInputStream fis = context.openFileInput(fileName);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+            }
+            return sb.toString();
+        } catch (FileNotFoundException fileNotFound) {
+            return null;
+        } catch (IOException ioException) {
+            return null;
+        }
+    }
+
+
+    public static boolean isFilePresent(Context context, String fileName) {
+        String path = context.getFilesDir().getAbsolutePath() + "/" + fileName;
+        File file = new File(path);
+        return file.exists();
     }
 
 

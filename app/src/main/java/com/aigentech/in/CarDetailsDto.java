@@ -26,6 +26,9 @@ public class CarDetailsDto implements Serializable {
     @SerializedName("seller_email_address")
     private String sellerEmailAddress;
 
+    @SerializedName("total_photo_count")
+    private String totalPhotoCount;
+
 
     public String getCarNumber() {
         return carNumber;
@@ -73,5 +76,14 @@ public class CarDetailsDto implements Serializable {
 
     public void setSellerEmailAddress(String sellerEmailAddress) {
         this.sellerEmailAddress = sellerEmailAddress;
+    }
+
+
+    public String getTotalPhotoCount() {
+        return totalPhotoCount;
+    }
+
+    public void setTotalPhotoCount(String totalPhotoCount) {
+        this.totalPhotoCount = totalPhotoCount;
     }
 }
