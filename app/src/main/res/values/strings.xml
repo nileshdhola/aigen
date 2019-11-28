@@ -6,7 +6,7 @@
     <string name="err_msg_password">Enter the password</string>
     <string name="err_msg_password_not_match">Password not match</string>
     <string name="err_msg_email_not_match">Email address not match</string>
-
+    <string name="err_msg_car_reg">Car Number not match</string>
     <string name="view_ad">View Ad</string>
     <string name="create_ad">create Ad</string>
     <string name="logout">Logout</string>
