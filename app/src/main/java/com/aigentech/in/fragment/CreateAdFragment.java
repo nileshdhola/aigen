@@ -178,7 +178,7 @@ public class CreateAdFragment extends Fragment {
                     Gson gson = new Gson();
                     String jsonData = gson.toJson(carDetailsDto, CarDetailsDto.class);
                     System.out.println("JSON DATA" + jsonData);
-                    CommonUtils.addEntryToJsonFile(getContext(), carDetailsDto.getCarNumber(), jsonData);
+                    //CommonUtils.addEntryToJsonFile(getContext(), carDetailsDto.getCarNumber(), jsonData);
                     //CommonUtils.writeToFileJson(getContext(), jsonData, carDetailsDto.getCarNumber());
                    /* boolean isFileCreated = CommonUtils.createJsonFile(getActivity(), "storage.json", jsonData);
                     if (isFileCreated) {

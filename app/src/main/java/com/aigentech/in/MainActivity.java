@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private static final int REQUEST_PERMISSION_SETTING = 101;
     String[] permissionsRequired = new String[]{Manifest.permission.CAMERA,
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CALL_PHONE};
 
     private SharedPreferences permissionStatus;
     private boolean sentToSettings = false;
@@ -74,10 +74,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         if (ActivityCompat.checkSelfPermission(MainActivity.this, permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(MainActivity.this, permissionsRequired[1]) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(MainActivity.this, permissionsRequired[2]) != PackageManager.PERMISSION_GRANTED) {
+                || ActivityCompat.checkSelfPermission(MainActivity.this, permissionsRequired[2]) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(MainActivity.this, permissionsRequired[3]) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, permissionsRequired[0])
                     || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, permissionsRequired[1])
-                    || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, permissionsRequired[2])) {
+                    || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, permissionsRequired[2])
+                    || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, permissionsRequired[3])) {
                 //Show Information about why you need the permission
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Need Multiple Permissions");
@@ -155,7 +157,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 proceedAfterPermission();
             } else if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, permissionsRequired[0])
                     || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, permissionsRequired[1])
-                    || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, permissionsRequired[2])) {
+                    || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, permissionsRequired[2])
+                    || ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, permissionsRequired[3])) {
                 Toast.makeText(getBaseContext(), "Permissions Required", Toast.LENGTH_LONG).show();
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Need Multiple Permissions");
@@ -192,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         if (requestCode == Config.RC_PICK_IMAGES && resultCode == RESULT_OK && data != null) {
             ArrayList<Image> images = data.getParcelableArrayListExtra(Config.EXTRA_IMAGES);
-            Toast.makeText(getBaseContext(), "You have total" + images.size() + "image select.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(), "You have total   " + images.size() + "   image select.", Toast.LENGTH_LONG).show();
             ((CreateAdFragment) fragment).getTotalSelectImage(images);
         }
 
@@ -258,5 +261,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
 
         return false;
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

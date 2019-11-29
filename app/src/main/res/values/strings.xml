@@ -10,7 +10,11 @@
     <string name="view_ad">View Ad</string>
     <string name="create_ad">create Ad</string>
     <string name="logout">Logout</string>
-
+    <string name="title_placeholder">Title</string>
+    <string name="news_placeholder">News</string>
+    <string name="sports_info_placeholder">Here is some news</string>
+    <string name="empty_screen">We do not have anything\nhere right now. Please Retry</string>
+    <string name="btn_retry">Retry</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -36,5 +36,7 @@
         <item name="boxStrokeColor">@color/text_input_box_stroke</item>
     </style>
 
-
+    <style name="ToolbarColoredBackArrow" parent="AppTheme">
+        <item name="android:textColorSecondary">@color/white</item>
+    </style>
 </resources>

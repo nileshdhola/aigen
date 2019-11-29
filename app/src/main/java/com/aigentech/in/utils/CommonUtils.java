@@ -55,6 +55,7 @@ public class CommonUtils {
     }
 
     //endregion
+
     //region validation password
     public static boolean validatePassword(Context context, TextInputEditText edittextPassword, TextInputLayout inputEmailId) {
         String pass = edittextPassword.getText().toString().trim();
@@ -138,7 +139,8 @@ public class CommonUtils {
             //save imaage to source to destion floder
             for (int i = 0; i <= saveImage.size() - 1; i++) {
                 File sourceImage = new File(saveImage.get(i).getPath()); //returns the image File from model class to be moved.
-                File destinationImage = new File(f1, saveImage.get(i).getName());
+                //File destinationImage = new File(f1, saveImage.get(i).getName());
+                File destinationImage = new File(f1, "aigen" + i + ".jpg");
                 copyFile1(sourceImage, destinationImage);
             }
             return true;
@@ -332,5 +334,26 @@ public class CommonUtils {
         return file.exists();
     }
 
+    public static ArrayList<String> getFloderPhoto(String number) {
+        ArrayList<String> f = new ArrayList<String>();// list of file paths
+        File[] listFile;
+        String myfolder = Environment.getExternalStorageDirectory() + "/" + "AIGEN";
+        File file = new File(myfolder, number);
 
+        if (file.isDirectory()) {
+            listFile = file.listFiles();
+
+
+            for (int i = 0; i < listFile.length; i++) {
+
+                f.add(listFile[i].getAbsolutePath());
+
+            }
+            System.out.println("Total photo" + f.size());
+
+            return f;
+        }
+
+        return f;
+    }
 }
