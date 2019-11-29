@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.aigentech.in.CarDetailsDto;
+import com.aigentech.in.model.CarDetailsDto;
 import com.aigentech.in.R;
 import com.aigentech.in.ViewInfoActivity;
 import com.google.gson.Gson;

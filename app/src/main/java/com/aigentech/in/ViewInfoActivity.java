@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 
+import com.aigentech.in.model.CarDetailsDto;
 import com.aigentech.in.utils.CommonUtils;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;

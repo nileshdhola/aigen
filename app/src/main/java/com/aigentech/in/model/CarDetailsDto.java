@@ -1,4 +1,4 @@
-package com.aigentech.in;
+package com.aigentech.in.model;
 
 import com.google.gson.annotations.SerializedName;
 

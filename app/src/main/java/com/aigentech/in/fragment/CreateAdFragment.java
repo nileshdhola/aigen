@@ -16,8 +16,8 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
-import com.aigentech.in.CarDetailsDto;
 import com.aigentech.in.R;
+import com.aigentech.in.model.CarDetailsDto;
 import com.aigentech.in.utils.CommonUtils;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -72,17 +72,6 @@ public class CreateAdFragment extends Fragment {
     TextInputLayout inputSellerEmailId;
 
     private CarDetailsDto carDetailsDto;
-    /*
-     ^ means start of string
-     [A-Z]{2} means 2 characters in the range of A through Z
-     \s means white space
-     [0-9]{2} means 2 characters in the range of 0 through 9
-             \s means white space
-     [A-Z]{2} means 2 characters in the range of A through Z
-     \s means white space
-     [0-9]{4} means 4 characters in the range of 0 through 9
-     $ means end of string
-     */
     //MP 09 AB 1234
 
     public CreateAdFragment() {
@@ -101,6 +90,10 @@ public class CreateAdFragment extends Fragment {
     }
 
     private void bindData() {
+        //String jsonData = "{\"car_company_name\":\"hhdd\",\"car_name\":\"ddcc\",\"car_number\":\"NH77JJ88\",\"seller_mobile\":\"8888888888\",\"seller_email_address\":\"d@outlook.com\",\"seller_name\":\"ccc\",\"total_photo_count\":\"1\"}";
+        CommonUtils.WriteJsonData(getContext());
+        //CommonUtils.writeToFileJson(getContext(),"BMW", "MH16MH1222", "S7");
+
         carDetailsDto = new CarDetailsDto();
         imgUpload.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -260,7 +253,7 @@ public class CreateAdFragment extends Fragment {
                 textTotalImage.setVisibility(View.GONE);
                 return;
             } else {
-                textTotalImage.setVisibility(View.VISIBLE);
+                textTotalImage.setVisibility(View.GONE);
                 textTotalImage.setText("" + selected.size());
                 images = selected;
             }

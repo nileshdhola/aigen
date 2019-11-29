@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.aigentech.in.CarDetailsDto;
 import com.aigentech.in.R;
 import com.aigentech.in.adapter.ViewAdAdapter;
+import com.aigentech.in.model.CarDetailsDto;
 import com.aigentech.in.utils.CommonUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -48,13 +48,12 @@ public class ViewAdFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_view_ad, container, false);
         ButterKnife.bind(this, view);
-        String jsonData = "[{\"car_company_name\":\"hhdd\",\"car_name\":\"ddcc\",\"car_number\":\"NH77JJ88\",\"seller_mobile\":\"8888888888\",\"seller_email_address\":\"d@outlook.com\",\"seller_name\":\"ccc\",\"total_photo_count\":\"1\"},{\"car_company_name\":\"hhdd\",\"car_name\":\"ddcc\",\"car_number\":\"NH77JJ99\",\"seller_mobile\":\"6565666565\",\"seller_email_address\":\"asad@outlook.com\",\"seller_name\":\"ccc\",\"total_photo_count\":\"1\"}]";
+        String jsonData = "[{\"car_company_name\":\"hhdd\",\"car_name\":\"ddcc\",\"car_number\":\"NH77JJ9999\",\"seller_mobile\":\"8888888888\",\"seller_email_address\":\"d@outlook.com\",\"seller_name\":\"ccc\",\"total_photo_count\":\"1\"},{\"car_company_name\":\"hhdd\",\"car_name\":\"ddcc\",\"car_number\":\"NH77JJ99\",\"seller_mobile\":\"6565666565\",\"seller_email_address\":\"asad@outlook.com\",\"seller_name\":\"ccc\",\"total_photo_count\":\"1\"}]";
         setAdapterData(view, jsonData);
 
-
-       /* boolean isFilePresent = CommonUtils.isFilePresent(getActivity(), "storage.json");
-          if (isFilePresent) {
-            String jsonString = CommonUtils.read(getActivity(), "storage.json");
+      /*  boolean isFilePresent = CommonUtils.isFilePresent(getActivity());
+        if (isFilePresent) {
+            String jsonString = CommonUtils.read(getActivity());
             System.out.println("JSON Fils : " + jsonString);
             //do the json parsing here and do the rest of functionality of app
         }*/
@@ -76,6 +75,8 @@ public class ViewAdFragment extends Fragment {
         mSportAdapter = new ViewAdAdapter(new ArrayList<>());
         mSportAdapter.addItems(posts);
         mRecyclerView.setAdapter(mSportAdapter);
+
+
 
     }
 

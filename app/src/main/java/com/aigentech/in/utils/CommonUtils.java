@@ -16,7 +16,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.nguyenhoanglam.imagepicker.model.Image;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -28,14 +27,14 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 public class CommonUtils {
     private static final String car_rgex = "^[a-zA-z]{2}\\s[0-9]{2}\\s[0-9]{4}$";
-
+    final static String FILENAME = "AIGEN";
 
     //region validation Email
     public static boolean validateEmail(Context context, TextInputEditText edittextEmail, TextInputLayout inputEmailId) {
@@ -85,40 +84,6 @@ public class CommonUtils {
         }
     }
 
-    //region validation Email
-    public static boolean validateCarReg(Context context, TextInputEditText edittextEmail, TextInputLayout inputEmailId) {
-        String number = edittextEmail.getText().toString().trim();
-        if (number.isEmpty() || !number.matches(car_rgex)) {
-            inputEmailId.setError(context.getResources().getString(R.string.err_msg_car_reg));
-            requestFocus((Activity) context, inputEmailId);
-            return false;
-        } else {
-            inputEmailId.setErrorEnabled(false);
-        }
-        return true;
-    }
-
-
-    //Method to move the file
-    public static void moveFile(File sourceFile, File destFile) throws IOException {
-        if (!sourceFile.exists()) {
-            return;
-        }
-        FileChannel source = null;
-        FileChannel destination = null;
-        source = new FileInputStream(sourceFile).getChannel();
-        destination = new FileOutputStream(destFile).getChannel();
-        if (destination != null && source != null) {
-            destination.transferFrom(source, 0, source.size());
-        }
-        if (source != null) {
-            source.close();
-        }
-        if (destination != null) {
-            destination.close();
-        }
-    }
-
     public static boolean storeImageInFloder(Context context, String floderName, ArrayList<Image> saveImage) {
         try {
             //create parent floder
@@ -141,7 +106,7 @@ public class CommonUtils {
                 File sourceImage = new File(saveImage.get(i).getPath()); //returns the image File from model class to be moved.
                 //File destinationImage = new File(f1, saveImage.get(i).getName());
                 File destinationImage = new File(f1, "aigen" + i + ".jpg");
-                copyFile1(sourceImage, destinationImage);
+                copyFileSoureceToDestination(sourceImage, destinationImage);
             }
             return true;
         } catch (Exception e) {
@@ -152,7 +117,7 @@ public class CommonUtils {
 
     }
 
-    private static void copyFile1(File sourceFile, File destFile) throws IOException {
+    private static void copyFileSoureceToDestination(File sourceFile, File destFile) throws IOException {
         if (!sourceFile.exists()) {
             return;
         }
@@ -171,167 +136,6 @@ public class CommonUtils {
             destination.close();
         }
 
-    }
-
-    public static void writeToFileJson(Context context, String data, String carNumber) {
-        try {
-            File file = new File(context.getFilesDir(), "AIGEN");
-            FileReader fileReader = null;
-            FileWriter fileWriter = null;
-            BufferedReader bufferedReader = null;
-            BufferedWriter bufferedWriter = null;
-            String response = null;
-            if (!file.exists()) {
-                file.createNewFile();
-                fileWriter = new FileWriter(file.getAbsoluteFile());
-                bufferedWriter = new BufferedWriter(fileWriter);
-                bufferedWriter.write("{}");
-                bufferedWriter.close();
-            }
-            StringBuffer output = new StringBuffer();
-            fileReader = new FileReader(file.getAbsoluteFile());
-            bufferedReader = new BufferedReader(fileReader);
-            String line = "";
-            while ((line = bufferedReader.readLine()) != null) {
-
-                output.append(line + "\n");
-                //output.append(line);
-            }
-            response = output.toString();
-            bufferedReader.close();
-
-
-            JSONObject messageDetails = new JSONObject(response);
-            Boolean isUserExit = messageDetails.has("Username");
-            if (!isUserExit) {
-                JSONArray newuserMessage = new JSONArray();
-                newuserMessage.put(carNumber);
-                // messageDetails.put("Username", newuserMessage);
-                messageDetails.put(carNumber, data);
-            } else {
-                JSONArray userMessage = (JSONArray) messageDetails.get("Username");
-                userMessage.put(carNumber);
-            }
-
-            fileWriter = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fileWriter);
-            bw.write(messageDetails.toString());
-            bw.close();
-        } catch (Exception e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-    }
-
-    public static void addEntryToJsonFile(Context ctx, String id, String name) {
-
-        // parse existing/init new JSON
-
-        File jsonFile = new File(ctx.getDir("my_data_dir", 0), "storage.json");
-        String previousJson = null;
-        if (jsonFile.exists()) {
-            try {
-                previousJson = read(ctx, "storage.json");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            previousJson = "{}";
-        }
-
-        // create new "complex" object
-        JSONObject mO = null;
-        JSONObject jO = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-
-        try {
-            mO = new JSONObject(previousJson);
-            jO.put("car", id);
-          /*  jO.put("completed", true);
-            jO.put("name", name);*/
-            //mO.put(id, name); //thanks "retired" answer
-            //jO.put("name", name);
-            mO.put(id, jO);
-            jsonArray.put(name);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        // generate string from the object
-        String jsonString = null;
-        try {
-            jsonString = mO.toString(4);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        // write back JSON file
-        write(jsonFile, jsonString);
-
-    }
-
-    public static void write(File jsonFile, String jsonString) {
-        // String path = Environment.getExternalStorageDirectory() + File.separator + "/AppName/App_cache" + File.separator;
-        try {
-
-            if (!jsonFile.createNewFile()) {
-                jsonFile.delete();
-                jsonFile.createNewFile();
-            }
-            ObjectOutputStream objectOutputStream = null;
-
-            objectOutputStream = new ObjectOutputStream(new FileOutputStream(jsonFile));
-            objectOutputStream.writeObject(jsonString);
-            objectOutputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
-    public static boolean createJsonFile(Context context, String fileName, String jsonString) {
-        String FILENAME = "storage.json";
-
-        try {
-            FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-            if (jsonString != null) {
-                fos.write(jsonString.getBytes());
-            }
-            fos.close();
-            return true;
-        } catch (
-                FileNotFoundException fileNotFound) {
-            return false;
-        } catch (
-                IOException ioException) {
-            return false;
-        }
-
-    }
-
-    public static String read(Context context, String fileName) {
-        try {
-            FileInputStream fis = context.openFileInput(fileName);
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(isr);
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
-            }
-            return sb.toString();
-        } catch (FileNotFoundException fileNotFound) {
-            return null;
-        } catch (IOException ioException) {
-            return null;
-        }
-    }
-
-
-    public static boolean isFilePresent(Context context, String fileName) {
-        String path = context.getFilesDir().getAbsolutePath() + "/" + fileName;
-        File file = new File(path);
-        return file.exists();
     }
 
     public static ArrayList<String> getFloderPhoto(String number) {
@@ -355,5 +159,160 @@ public class CommonUtils {
         }
 
         return f;
+    }
+
+
+    public static void writeToFileJson(Context context, String companyName, String carNumber, String carName) {
+        try {
+            File file = new File(context.getFilesDir(), FILENAME);
+            FileReader fileReader = null;
+            FileWriter fileWriter = null;
+            BufferedReader bufferedReader = null;
+            BufferedWriter bufferedWriter = null;
+            String response = null;
+            if (!file.exists()) {
+                file.createNewFile();
+                fileWriter = new FileWriter(file.getAbsoluteFile());
+                bufferedWriter = new BufferedWriter(fileWriter);
+                bufferedWriter.write("{}");
+                bufferedWriter.close();
+            }
+
+            StringBuffer output = new StringBuffer();
+            fileReader = new FileReader(file.getAbsoluteFile());
+            bufferedReader = new BufferedReader(fileReader);
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+
+                output.append(line + "\n");
+                //output.append(line);
+            }
+            response = output.toString();
+            bufferedReader.close();
+
+
+            JSONObject messageDetails = new JSONObject(response);
+            Boolean isUserExit = messageDetails.has("Username");
+            if (!isUserExit) {
+                //JSONArray newuserMessage = new JSONArray();
+                //newuserMessage.put(carNumber);
+                messageDetails.put("car_company_name", companyName);
+                messageDetails.put("car_name", carName);
+                messageDetails.put("car_number", carNumber);
+
+                messageDetails.put(carNumber, response);
+            } else {
+                JSONArray userMessage = (JSONArray) messageDetails.get("Username");
+                userMessage.put(carNumber);
+            }
+
+            fileWriter = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fileWriter);
+            bw.write(messageDetails.toString());
+            bw.close();
+        } catch (Exception e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
+    public static String read(Context context) {
+        try {
+            // File file = new File(context.getFilesDir(), "AIGEN");
+            FileInputStream fis = context.openFileInput(FILENAME);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+            }
+            return sb.toString();
+        } catch (FileNotFoundException fileNotFound) {
+            return null;
+        } catch (IOException ioException) {
+            return null;
+        }
+    }
+
+
+    public static boolean isFilePresent(Context context) {
+        String path = context.getFilesDir().getAbsolutePath() + "/" + FILENAME;
+        File file = new File(path);
+        return file.exists();
+    }
+
+
+    //write
+    public static void WriteJsonData(Context context) {
+        //File file = new File(context.getFilesDir(), FILENAME);
+        File fileJson = new File(context.getExternalFilesDir("/app"), "app.json");
+
+        if (!fileJson.exists()) {
+            fileJson.mkdir();
+        }
+        try {
+
+            String strFileJson = getStringFromFile(fileJson);
+            JSONArray jsonArray = new JSONArray(strFileJson);
+            JSONObject jsonObj = new JSONObject();
+
+            jsonObj.put("car_company_name", "Maruti");
+            jsonObj.put("car_name", "Appointment Title2");
+            jsonObj.put("car_number", "MH18AB1234");
+            jsonObj.put("seller_mobile", "01:30");
+            jsonObj.put("seller_email_address", "Dhola");
+            jsonObj.put("seller_name", "Nilesh");
+            jsonObj.put("total_photo_count", "1");
+
+            jsonArray.put(jsonObj);
+            writeJsonFile(fileJson, jsonArray.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getStringFromFile(File fl) throws Exception {
+        //File fl = new File(filePath);
+        FileInputStream fin = new FileInputStream(fl);
+        String ret = convertStreamToString(fin);
+        //Make sure you close all streams.
+        fin.close();
+        return ret;
+    }
+
+    public static String convertStreamToString(InputStream is) throws Exception {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line).append("\n");
+        }
+        return sb.toString();
+    }
+
+    public static void writeJsonFile(File file, String json) {
+        BufferedWriter bufferedWriter = null;
+        try {
+
+            if (!file.exists()) {
+                Log.e("App", "file not exist");
+                file.createNewFile();
+            }
+
+            FileWriter fileWriter = new FileWriter(file);
+            bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(json);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (bufferedWriter != null) {
+                    bufferedWriter.close();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 }
