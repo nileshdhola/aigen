@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 public class CommonUtils {
     private static final String car_rgex = "^[a-zA-z]{2}\\s[0-9]{2}\\s[0-9]{4}$";
-    final static String FILENAME = "AIGEN";
+    final static String FILENAME = "a.txt";
 
     //region validation Email
     public static boolean validateEmail(Context context, TextInputEditText edittextEmail, TextInputLayout inputEmailId) {
@@ -244,16 +244,17 @@ public class CommonUtils {
 
     //write
     public static void WriteJsonData(Context context) {
-        //File file = new File(context.getFilesDir(), FILENAME);
-        File fileJson = new File(context.getExternalFilesDir("/app"), "app.json");
+        File fileJson = new File(context.getFilesDir(), FILENAME);
+        //File fileJson = new File(context.getExternalFilesDir("/app"), "app.json");
 
-        if (!fileJson.exists()) {
-            fileJson.mkdir();
-        }
         try {
 
             String strFileJson = getStringFromFile(fileJson);
-            JSONArray jsonArray = new JSONArray(strFileJson);
+            JSONArray jsonArray;
+            if(TextUtils.isEmpty(strFileJson)) {
+                jsonArray = new JSONArray();
+            }
+            else {jsonArray= new JSONArray(strFileJson);};
             JSONObject jsonObj = new JSONObject();
 
             jsonObj.put("car_company_name", "Maruti");
@@ -273,6 +274,9 @@ public class CommonUtils {
 
     public static String getStringFromFile(File fl) throws Exception {
         //File fl = new File(filePath);
+        if(!fl.exists()) {
+            return "";
+        }
         FileInputStream fin = new FileInputStream(fl);
         String ret = convertStreamToString(fin);
         //Make sure you close all streams.
