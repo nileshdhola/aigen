@@ -15,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.aigentech.in.R;
 import com.aigentech.in.model.CarDetailsDto;
@@ -90,10 +92,6 @@ public class CreateAdFragment extends Fragment {
     }
 
     private void bindData() {
-        //String jsonData = "{\"car_company_name\":\"hhdd\",\"car_name\":\"ddcc\",\"car_number\":\"NH77JJ88\",\"seller_mobile\":\"8888888888\",\"seller_email_address\":\"d@outlook.com\",\"seller_name\":\"ccc\",\"total_photo_count\":\"1\"}";
-        CommonUtils.WriteJsonData(getContext());
-        //CommonUtils.writeToFileJson(getContext(),"BMW", "MH16MH1222", "S7");
-
         carDetailsDto = new CarDetailsDto();
         imgUpload.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +125,7 @@ public class CreateAdFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //save file
-                saveImage();
+                saveImage(view);
             }
         });
 
@@ -158,29 +156,13 @@ public class CreateAdFragment extends Fragment {
     }
 
 
-    private void saveImage() {
+    private void saveImage(View view1) {
         try {
             int valid = validationData();
             if (valid == 0) {
                 if (images == null || images.size() == 0) {
                     Toast.makeText(getActivity(), "Please atleast upload 1 image", Toast.LENGTH_SHORT).show();
                 } else {
-
-                    carDetailsDto.setTotalPhotoCount(String.valueOf(images.size()));
-
-                    Gson gson = new Gson();
-                    String jsonData = gson.toJson(carDetailsDto, CarDetailsDto.class);
-                    System.out.println("JSON DATA" + jsonData);
-                    //CommonUtils.addEntryToJsonFile(getContext(), carDetailsDto.getCarNumber(), jsonData);
-                    //CommonUtils.writeToFileJson(getContext(), jsonData, carDetailsDto.getCarNumber());
-                   /* boolean isFileCreated = CommonUtils.createJsonFile(getActivity(), "storage.json", jsonData);
-                    if (isFileCreated) {
-                        Toast.makeText(getActivity(), "Successfull save", Toast.LENGTH_SHORT).show();
-                    } else {
-                        //show error or try again.
-                        Toast.makeText(getActivity(), "Fail to save", Toast.LENGTH_SHORT).show();
-                    }*/
-
 
                     String carNumber = edittextCarNumber.getText().toString();
                     if (TextUtils.isEmpty(carNumber)) {
@@ -190,9 +172,13 @@ public class CreateAdFragment extends Fragment {
                     ArrayList<Image> saveImage = images;
                     boolean saveData = CommonUtils.storeImageInFloder(getContext(), carNumber, saveImage);
                     if (saveData) {
+                        carDetailsDto.setTotalPhotoCount(String.valueOf(images.size()));
+                        Gson gson = new Gson();
+                        String jsonData = gson.toJson(carDetailsDto, CarDetailsDto.class);
+                        CommonUtils.WriteJsonData(getContext(), jsonData);
                         Toast.makeText(getActivity(), "Save Successfull", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity(), "Failed to save data.", Toast.LENGTH_SHORT).show();
+
+                        onClick2(view1);
                     }
                 }
             }
@@ -263,4 +249,22 @@ public class CreateAdFragment extends Fragment {
         }
     }
 
+    public void onClick2(View view) {
+
+
+        ViewAdFragment fragment2 = new ViewAdFragment();
+        FragmentManager fragmentManager = getChildFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame, fragment2);
+        fragmentTransaction.addToBackStack(fragment2.toString());
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        fragmentTransaction.commit();
+
+
+       /* ViewAdFragment fragment2 = new ViewAdFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame, fragment2);
+        fragmentTransaction.commit();*/
+    }
 }

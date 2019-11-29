@@ -89,14 +89,13 @@ public class ViewInfoActivity extends AppCompatActivity {
             textCompanyName.setText(carDetailsDto.getCarCompanyName());
             textCarName.setText(carDetailsDto.getCarName());
             textSellerName.setText(carDetailsDto.getSellerName());
+            list = CommonUtils.getFloderPhoto(carDetailsDto.getCarNumber());
+            //set image
+            Slider.init(new PicassoImageLoadingService(this));
+            slider.setAdapter(new MainSliderAdapter());
+
         }
 
-        list = CommonUtils.getFloderPhoto("MH12AB9999");
-        System.out.println(list.size());
-
-        //set image
-        Slider.init(new PicassoImageLoadingService(this));
-        slider.setAdapter(new MainSliderAdapter());
 
 
         btnCall.setOnClickListener(new View.OnClickListener() {

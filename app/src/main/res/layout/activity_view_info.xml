@@ -45,7 +45,7 @@
             <ss.com.bannerslider.Slider
                 android:id="@+id/banner_slider1"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 app:slider_animateIndicators="true"
                 app:slider_indicatorSize="12dp"
                 app:slider_interval="5000"
@@ -243,7 +243,7 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnCall"
             android:layout_width="0dp"
-            android:layout_height="35dp"
+            android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
             android:layout_weight="1"
             android:background="@color/colorPrimary"
@@ -254,7 +254,7 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnEmail"
             android:layout_width="0dp"
-            android:layout_height="35dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@color/colorPrimary"
             android:text="Email"

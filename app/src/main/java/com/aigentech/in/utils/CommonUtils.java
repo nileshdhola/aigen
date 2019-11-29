@@ -11,8 +11,10 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.aigentech.in.R;
+import com.aigentech.in.model.CarDetailsDto;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.Gson;
 import com.nguyenhoanglam.imagepicker.model.Image;
 
 import org.json.JSONArray;
@@ -24,7 +26,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,6 +102,12 @@ public class CommonUtils {
                 f1.mkdirs();
             }
 
+
+           /* if (f.exists()) {
+                Toast.makeText(context,  " Car number already present.", Toast.LENGTH_SHORT).show();
+                return false;
+            }*/
+
             //save imaage to source to destion floder
             for (int i = 0; i <= saveImage.size() - 1; i++) {
                 File sourceImage = new File(saveImage.get(i).getPath()); //returns the image File from model class to be moved.
@@ -162,62 +169,9 @@ public class CommonUtils {
     }
 
 
-    public static void writeToFileJson(Context context, String companyName, String carNumber, String carName) {
-        try {
-            File file = new File(context.getFilesDir(), FILENAME);
-            FileReader fileReader = null;
-            FileWriter fileWriter = null;
-            BufferedReader bufferedReader = null;
-            BufferedWriter bufferedWriter = null;
-            String response = null;
-            if (!file.exists()) {
-                file.createNewFile();
-                fileWriter = new FileWriter(file.getAbsoluteFile());
-                bufferedWriter = new BufferedWriter(fileWriter);
-                bufferedWriter.write("{}");
-                bufferedWriter.close();
-            }
-
-            StringBuffer output = new StringBuffer();
-            fileReader = new FileReader(file.getAbsoluteFile());
-            bufferedReader = new BufferedReader(fileReader);
-            String line = "";
-            while ((line = bufferedReader.readLine()) != null) {
-
-                output.append(line + "\n");
-                //output.append(line);
-            }
-            response = output.toString();
-            bufferedReader.close();
-
-
-            JSONObject messageDetails = new JSONObject(response);
-            Boolean isUserExit = messageDetails.has("Username");
-            if (!isUserExit) {
-                //JSONArray newuserMessage = new JSONArray();
-                //newuserMessage.put(carNumber);
-                messageDetails.put("car_company_name", companyName);
-                messageDetails.put("car_name", carName);
-                messageDetails.put("car_number", carNumber);
-
-                messageDetails.put(carNumber, response);
-            } else {
-                JSONArray userMessage = (JSONArray) messageDetails.get("Username");
-                userMessage.put(carNumber);
-            }
-
-            fileWriter = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fileWriter);
-            bw.write(messageDetails.toString());
-            bw.close();
-        } catch (Exception e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-    }
-
     public static String read(Context context) {
         try {
-            // File file = new File(context.getFilesDir(), "AIGEN");
+            //File fis = new File(context.getFilesDir(), FILENAME);
             FileInputStream fis = context.openFileInput(FILENAME);
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader bufferedReader = new BufferedReader(isr);
@@ -243,27 +197,30 @@ public class CommonUtils {
 
 
     //write
-    public static void WriteJsonData(Context context) {
+    public static void WriteJsonData(Context context, String jsonData) {
         File fileJson = new File(context.getFilesDir(), FILENAME);
-        //File fileJson = new File(context.getExternalFilesDir("/app"), "app.json");
-
         try {
+
+            Gson gson = new Gson();
+            CarDetailsDto dto = gson.fromJson(jsonData, CarDetailsDto.class);
 
             String strFileJson = getStringFromFile(fileJson);
             JSONArray jsonArray;
-            if(TextUtils.isEmpty(strFileJson)) {
+            if (TextUtils.isEmpty(strFileJson)) {
                 jsonArray = new JSONArray();
+            } else {
+                jsonArray = new JSONArray(strFileJson);
             }
-            else {jsonArray= new JSONArray(strFileJson);};
+            ;
             JSONObject jsonObj = new JSONObject();
 
-            jsonObj.put("car_company_name", "Maruti");
-            jsonObj.put("car_name", "Appointment Title2");
-            jsonObj.put("car_number", "MH18AB1234");
-            jsonObj.put("seller_mobile", "01:30");
-            jsonObj.put("seller_email_address", "Dhola");
-            jsonObj.put("seller_name", "Nilesh");
-            jsonObj.put("total_photo_count", "1");
+            jsonObj.put("car_company_name", dto.getCarCompanyName());
+            jsonObj.put("car_name", dto.getCarName());
+            jsonObj.put("car_number", dto.getCarNumber());
+            jsonObj.put("seller_mobile", dto.getSelleMobileNo());
+            jsonObj.put("seller_email_address", dto.getSellerEmailAddress());
+            jsonObj.put("seller_name", dto.getSellerName());
+            jsonObj.put("total_photo_count", dto.getTotalPhotoCount());
 
             jsonArray.put(jsonObj);
             writeJsonFile(fileJson, jsonArray.toString());
@@ -274,7 +231,7 @@ public class CommonUtils {
 
     public static String getStringFromFile(File fl) throws Exception {
         //File fl = new File(filePath);
-        if(!fl.exists()) {
+        if (!fl.exists()) {
             return "";
         }
         FileInputStream fin = new FileInputStream(fl);

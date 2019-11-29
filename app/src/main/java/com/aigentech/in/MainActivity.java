@@ -195,7 +195,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         if (requestCode == Config.RC_PICK_IMAGES && resultCode == RESULT_OK && data != null) {
             ArrayList<Image> images = data.getParcelableArrayListExtra(Config.EXTRA_IMAGES);
-            Toast.makeText(getBaseContext(), "You have total   " + images.size() + "   image select.", Toast.LENGTH_LONG).show();
             ((CreateAdFragment) fragment).getTotalSelectImage(images);
         }
 
