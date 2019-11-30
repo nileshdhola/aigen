@@ -98,15 +98,15 @@ public class CommonUtils {
 
             //create child floder
             File f1 = new File(myfolder, floderName);
+            if (f1.exists() && f1.isDirectory()) {
+                Toast.makeText(context, " Car number already present.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
             if (!f1.exists()) {
                 f1.mkdirs();
             }
 
-
-           /* if (f.exists()) {
-                Toast.makeText(context,  " Car number already present.", Toast.LENGTH_SHORT).show();
-                return false;
-            }*/
 
             //save imaage to source to destion floder
             for (int i = 0; i <= saveImage.size() - 1; i++) {
@@ -211,7 +211,7 @@ public class CommonUtils {
             } else {
                 jsonArray = new JSONArray(strFileJson);
             }
-            ;
+
             JSONObject jsonObj = new JSONObject();
 
             jsonObj.put("car_company_name", dto.getCarCompanyName());
